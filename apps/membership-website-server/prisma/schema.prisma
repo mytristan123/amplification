@@ -1,0 +1,44 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Picture {
+  caption         String?
+  createdAt       DateTime       @default(now())
+  id              String         @id @default(cuid())
+  memberProfile   MemberProfile? @relation(fields: [memberProfileId], references: [id])
+  memberProfileId String?
+  updatedAt       DateTime       @updatedAt
+  url             String?
+}
+
+model MemberProfile {
+  age         Int?
+  biography   String?
+  createdAt   DateTime  @default(now())
+  dateOfBirth DateTime?
+  id          String    @id @default(cuid())
+  name        String?
+  pictures    Picture[]
+  updatedAt   DateTime  @updatedAt
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+model User {
+  createdAt      DateTime        @default(now())
+  email          String?         @unique
+  firstName      String?
+  id             String          @id @default(cuid())
+  lastName       String?
+  memberProfiles MemberProfile[]
+  password       String
+  roles          Json
+  updatedAt      DateTime        @updatedAt
+  username       String          @unique
+}
